@@ -1,0 +1,2 @@
+rootProject.name='MapApplication_Java_Firestore'
+include ':app'
