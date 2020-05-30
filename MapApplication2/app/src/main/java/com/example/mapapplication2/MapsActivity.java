@@ -12,6 +12,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -91,29 +92,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         switch (col) {
             case "HUE_YELLOW":
                 mMap.addMarker(new MarkerOptions().position(latlng).icon(
-                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)).
+                        title(mes + ", Light:" + hsi));
                 break;
             case "HUE_MAGENTA":
                 mMap.addMarker(new MarkerOptions().position(latlng).icon(
-                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)).
+                        title(mes + ", Light:" + hsi));
                 break;
             case "HUE_VIOLET":
                 mMap.addMarker(new MarkerOptions().position(latlng).icon(
-                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)).
+                        title(mes + ", Light:" + hsi));
                 break;
             case "HUE_GREEN":
                 mMap.addMarker(new MarkerOptions().position(latlng).icon(
-                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).
+                        title(mes + ", Light:" + hsi));
                 break;
             case "HUE_ORANGE":
                 mMap.addMarker(new MarkerOptions().position(latlng).icon(
-                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)).
+                        title(mes + ", Light:" + hsi));
                 break;
             default:
-                mMap.addMarker(new MarkerOptions().position(latlng));
+                mMap.addMarker(new MarkerOptions().position(latlng).
+                        title(mes + ", Light:" + hsi));
                 break;
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
-
     }
 }

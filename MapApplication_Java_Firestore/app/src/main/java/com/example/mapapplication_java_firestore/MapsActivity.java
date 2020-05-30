@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -40,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, SensorEventListener {
 
     private static final String TAG = "MapsActivity";
     public int counter = 0; //this counter counts how many marks we've added
@@ -62,6 +64,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<String> spinnerValues = new ArrayList<>();
     //sensor
     private SensorManager sensorManager;
+    private Sensor lightSensor;
+    private String lightSensorResult;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,19 +175,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final String lon = longitude.getText().toString();
         final String col = "HUE_" + colorSpinner.getSelectedItem().toString().toUpperCase();
         final String mes = userInput.getText().toString();
+        final String lis = lightSensorResult;
 
         //getting the humidity sensor
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        List<Sensor> humidity = sensorManager.getSensorList(Sensor.TYPE_RELATIVE_HUMIDITY);
-        String hsi = "Sensor Name: " + humidity.get(0).getName() + ", Sensor Type: "
-                + humidity.get(0).getType();
+
 
         //adding the right values to the location
         location.put("Latitude", lat);
         location.put("Longitude", lon);
         location.put("Marker_Color", col);
         location.put("User_Commend", mes);
-        location.put("Sensor_Info", hsi);
+        location.put("Light_Info", lis);
 
 
         //adding the right color marker to the map basically
@@ -234,5 +238,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             counter = 0;
         }
+    }
+
+    //pausing the sensor when not using it
+    @Override
+    public void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
+    //resuming the sensor when using it
+    @Override
+    public void onResume() {
+        super.onResume();
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        //giving the value of the sensor, to the sensor variable
+        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        if (lightSensor != null) { //checking if the humiditySensor exists
+            sensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_UI);
+        }
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        lightSensorResult = Float.toString(event.values[0]);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 }
