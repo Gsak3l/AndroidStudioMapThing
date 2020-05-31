@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -12,16 +11,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -61,10 +57,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //so calling the function for location1... location5
         for (int i = 0; i < 6; i++) {
             firebaseFirestore.collection("Map Locations").document("Location" + i).get()
-                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() { //success listener
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            if (documentSnapshot.exists()) {
+                            if (documentSnapshot.exists()) { //checking if the location exists
                                 addMapLocations(documentSnapshot);
                             }
                         }
@@ -83,7 +79,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String lat = documentSnapshot.getString("Latitude");
         String lon = documentSnapshot.getString("Longitude");
         String col = documentSnapshot.getString("Marker_Color");
-        String hsi = documentSnapshot.getString("Sensor_Info");
+        String hsi = documentSnapshot.getString("Light_Info");
         String mes = documentSnapshot.getString("User_Commend");
 
         //giving the marker the latitude and longitude

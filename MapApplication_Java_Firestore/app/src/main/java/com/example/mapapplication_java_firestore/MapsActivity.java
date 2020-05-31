@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -46,13 +45,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private static final String TAG = "MapsActivity";
     public int counter = 0; //this counter counts how many marks we've added
-
+    //firebase stuff
     private FirebaseFirestore firebaseFirestore; //firebase
     private LocationListener locationListener; //location listener
-    private LocationManager locationManager; //location manager
-    //these two variables are for the sensitivity of our location
-    private final long MIN_TIME = 1000;
-    private final long MIN_DIST = 5;
     //the xml elements
     private EditText latitude;
     private EditText longitude;
@@ -147,101 +142,83 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onProviderDisabled(String provider) {
             }
         };
-
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        //
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        try {
-            //using both data, and gps to track the location
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DIST, locationListener);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DIST, locationListener);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void UpdateButton(View view) {
-        Map<String, Object> location = new HashMap<>();
-        //Strings for all the values
-        final String lat = latitude.getText().toString();
-        final String lon = longitude.getText().toString();
-        final String col = "HUE_" + colorSpinner.getSelectedItem().toString().toUpperCase();
-        final String mes = userInput.getText().toString();
-        final String lis = lightSensorResult;
+        if (!latitude.getText().toString().trim().equals("") && !longitude.getText().toString().trim().equals("")
+                && !userInput.getText().toString().trim().equals("")) {
 
-        //getting the humidity sensor
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-
-
-        //adding the right values to the location
-        location.put("Latitude", lat);
-        location.put("Longitude", lon);
-        location.put("Marker_Color", col);
-        location.put("User_Commend", mes);
-        location.put("Light_Info", lis);
+            //Strings for all the values
+            final String lat = latitude.getText().toString();
+            final String lon = longitude.getText().toString();
+            final String col = "HUE_" + colorSpinner.getSelectedItem().toString().toUpperCase();
+            final String mes = userInput.getText().toString();
+            final String lis = lightSensorResult;
 
 
-        //adding the right color marker to the map basically
-        counter++;
-        if (counter < 6) {
-            firebaseFirestore.collection("Map Locations").document("Location" + counter).set(location)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() { //if it succeeds
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            //giving the latitude and longitude to the marker
-                            LatLng latlng = new LatLng(Float.parseFloat(lon), Float.parseFloat(lat));
-                            //switch case to change the color of the marker
-                            switch (col) {
-                                case "HUE_YELLOW":
-                                    mMap.addMarker(new MarkerOptions().position(latlng).icon(
-                                            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                                    break;
-                                case "HUE_MAGENTA":
-                                    mMap.addMarker(new MarkerOptions().position(latlng).icon(
-                                            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
-                                    break;
-                                case "HUE_VIOLET":
-                                    mMap.addMarker(new MarkerOptions().position(latlng).icon(
-                                            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
-                                    break;
-                                case "HUE_GREEN":
-                                    mMap.addMarker(new MarkerOptions().position(latlng).icon(
-                                            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                                    break;
-                                case "HUE_ORANGE":
-                                    mMap.addMarker(new MarkerOptions().position(latlng).icon(
-                                            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-                                    break;
-                                default:
-                                    mMap.addMarker(new MarkerOptions().position(latlng));
-                                    break;
+            Map<String, Object> location = new HashMap<>();
+            //adding the right values to the location
+            location.put("Latitude", lat);
+            location.put("Longitude", lon);
+            location.put("Marker_Color", col);
+            location.put("User_Commend", mes);
+            location.put("Light_Info", lis);
+
+            //adding the right color marker to the map basically
+            counter++;
+            if (counter < 6) {
+                firebaseFirestore.collection("Map Locations").document("Location" + counter).set(location)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() { //if it succeeds
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                //giving the latitude and longitude to the marker
+                                LatLng latlng = new LatLng(Float.parseFloat(lon), Float.parseFloat(lat));
+                                //switch case to change the color of the marker
+                                switch (col) {
+                                    case "HUE_YELLOW":
+                                        mMap.addMarker(new MarkerOptions().position(latlng).icon(
+                                                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                                        break;
+                                    case "HUE_MAGENTA":
+                                        mMap.addMarker(new MarkerOptions().position(latlng).icon(
+                                                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+                                        break;
+                                    case "HUE_VIOLET":
+                                        mMap.addMarker(new MarkerOptions().position(latlng).icon(
+                                                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+                                        break;
+                                    case "HUE_GREEN":
+                                        mMap.addMarker(new MarkerOptions().position(latlng).icon(
+                                                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                                        break;
+                                    case "HUE_ORANGE":
+                                        mMap.addMarker(new MarkerOptions().position(latlng).icon(
+                                                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                                        break;
+                                    default:
+                                        mMap.addMarker(new MarkerOptions().position(latlng));
+                                        break;
+                                }
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
+                                Toast.makeText(MapsActivity.this, "Location Added Successfully", Toast.LENGTH_SHORT).show();
                             }
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
-                            Toast.makeText(MapsActivity.this, "Location Added Successfully", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() { //if it fails
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(MapsActivity.this, "We couldn't add the location", Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, e.toString());
-                        }
-                    });
+                        })
+                        .addOnFailureListener(
+                                new OnFailureListener() { //if it fails
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(MapsActivity.this, "We couldn't add the location", Toast.LENGTH_SHORT).show();
+                                Log.d(TAG, e.toString());
+                            }
+                        });
+            }
+            //deleting the values on the EditText fields
+            latitude.setText("");
+            longitude.setText("");
+            userInput.setText("");
+        } else {
+            Toast.makeText(this, "Please Fill all the Fields", Toast.LENGTH_SHORT).show();
         }
-        //deleting the values on the EditText fields
-        latitude.setText("");
-        longitude.setText("");
-        userInput.setText("");
     }
 
     //pausing the sensor when not using it
