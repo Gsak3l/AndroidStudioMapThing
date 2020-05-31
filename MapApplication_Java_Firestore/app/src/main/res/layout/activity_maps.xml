@@ -76,6 +76,7 @@
         android:onClick="UpdateButton"
         android:text="Add Location"
         android:textColor="@android:color/white"
-        android:textSize="14dp" />
+        android:textSize="14dp"
+        android:hint="Type Something Here..."/>
 
 </LinearLayout>

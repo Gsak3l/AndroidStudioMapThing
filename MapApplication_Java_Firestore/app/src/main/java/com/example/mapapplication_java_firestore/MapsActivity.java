@@ -96,6 +96,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 android.R.layout.simple_spinner_item, spinnerValues);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         colorSpinner.setAdapter(dataAdapter);
+        latitude.setText("");
+        longitude.setText("");
 
 
         mapFragment.getMapAsync(this);
@@ -235,9 +237,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             Log.d(TAG, e.toString());
                         }
                     });
-        } else {
-            counter = 0;
         }
+        //deleting the values on the EditText fields
+        latitude.setText("");
+        longitude.setText("");
+        userInput.setText("");
     }
 
     //pausing the sensor when not using it
